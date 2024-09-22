@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Sidebar 01</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./../static/AdminCss/style.css">
+    <link rel="stylesheet" href="./../static/AdminCss/comments.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">    
+
+    <style>
+        .hidden {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper d-flex align-items-stretch">
+    <nav id="sidebar">
+        <div class="p-4 pt-5">
+            <a href="#" class="img logo rounded-circle mb-5" style="background-image: url(./../static/AminImages/logo.jpg);"></a>
+            <ul class="list-unstyled components mb-5">
+                <li>
+                    <a href="#" onclick="showSection('addblog')">Add New Blog</a>
+                </li>
+                
+                <li>
+                    <a href="#" onclick="showSection('allblogs')">Blogs</a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('comments')">Comments</a>
+                </li>
+                <li>
+                    <a href="#" onclick="showSection('contact')">Contact</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}">Logout</a>
+                </li>
+            </ul>
+
+            <div class="footer">
+                <p>
+                    Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
+                </p>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content  -->
+    <div id="content" class="p-4 p-md-5">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+
+                <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                    <i class="fa fa-bars"></i>
+                    <span class="sr-only">Toggle Menu</span>
+                </button>
+                <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa fa-bars"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Portfolio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Start of admin Content Controlled by sidebar -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <script>
+                // Automatically fade out the alert after 3 seconds
+                window.setTimeout(function() {
+                    document.querySelector('.alert').classList.add('fade');
+                    document.querySelector('.alert').classList.add('show');
+                    setTimeout(function() {
+                                        document.querySelector('.alert').remove();
+                                    }, 1000); // Remove the alert from the DOM after fading out
+                                }, 3000); // Fade out after 3 seconds
+                            </script>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+         <!--Adding a new blog-->
+        <div class="container tohide hidden" id="addblog">
+            <div class="top"></div>
+            <h2>Add New Blog</h2>
+            <form method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="form_type" value="submit_blog"> 
+                <label for="title" style="padding-right: 90px;">Title:</label>
+                <input type="text" name="title" id="title" style="width: 80%; height: 40px;" required placeholder="Title"><br /><br />
+            
+                <label for="Description" style="padding-right: 40px;">Description:</label>
+                <input type="text" name="description" id="description" style="width: 80%; height: 40px;" required placeholder="Description"><br /><br />
+            
+                <label for="keywords" style="padding-right: 47px;">Key words:</label>
+                <input type="text" name="keywords" id="keywords" style="width: 80%; height: 40px;" placeholder="keyword1, keyword2, etc"><br /><br />
+            
+                <label for="category" style="padding-right: 60px;">Category:</label>
+                <select name="category" id="category" style="width: 80%; height: 40px;" required>
+                    <option value="News">News</option>
+                    <option value="Politics">Politics</option>
+                    <option value="Business">Business</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Health">Health</option>
+                    <option value="Education">Education</option>
+                    <option value="Science">Science</option>
+                    <option value="Technology">Technology</option>
+                    <option value="Foods">Foods</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Lifestyle">Lifestyle</option>
+                </select><br /><br />
+            
+                <label for="editor">Content:</label>
+                <textarea name="editor" id="editor" style="width: 100%; height: 400px;" required></textarea><br />
+            
+                <label for="image">Image:</label>
+                <input type="file" name="image" id="image" required><br /><br />
+            
+                <button type="submit">Submit</button>
+            </form>
+            
+        </div>
+
+        <!--End of adding a new page-->
+        <!--Contact Section-->
+        <div class="bg-light mb-3 tohide hidden" id="contact" style="padding: 30px;">
+            <h3 class="mb-4">Leave a comment</h3>
+            <form method="POST" action="{{ url_for('routes.user_dashboard') }}">
+                <input type="hidden" name="form_type" value="submit_comment">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" class="form-control" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" cols="30" rows="5" name="message" class="form-control"></textarea>
+                </div>
+                <div class="form-group mb-0">
+                    <input type="submit" value="Leave a comment" name="submit"
+                        class="btn btn-primary font-weight-semi-bold py-2 px-3">
+                </div>
+            </form>
+        </div>
+        <!--End of contact Section-->
+        <!--Comments section-->
+        <div class="container mt-5 tohide hidden" id="comments">
+
+            <div class="row  d-flex justify-content-center">
+
+                <div class="col-md-8">
+
+                    <div class="headings d-flex justify-content-between align-items-center mb-3">
+                        <h5>Unread comments(6)</h5>
+
+                        <div class="buttons">
+
+                            <p>Showing All</p>
+                            
+                        </div>
+                      
+                        
+                    </div>
+                    <!--Start of comment-->
+                    {% for item in comments %}
+                        <div class="card p-3 mt-2">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div class="user d-flex flex-row align-items-center">
+                                    <img src="./../static/AminImages/userIcon.png" width="30" class="user-img rounded-circle mr-2">
+                                    <span>
+                                        <small class="font-weight-bold text-primary">{{ item.comment.name }} ({{ item.comment.email }})</small> 
+                                        <small class="font-weight-bold">{{ item.comment.message }}</small>
+                                    </span>
+                                </div>
+                                <small>{{ item.time_since }}</small>
+
+                            </div>
+
+                            <div class="action d-flex justify-content-between mt-2 align-items-center">
+
+                                <div class="reply px-4">
+                                    <form method="POST" action="{{ url_for('routes.mark_comment_read_users', comment_id=item.comment.id) }}" style="display: inline;">
+                                        <button class="btn btn-link p-0 small" type="submit" style="border: none; background: none; color: inherit; text-decoration: none;
+                                        font-size: small;">
+                                            {{ 'Mark as Read' if not item.comment.read_status else 'Read' }}
+                                        </button>
+                                    </form>
+                                    <span class="dots"> • </span>
+                                    <form method="POST" action="{{ url_for('routes.delete_comment_users', comment_id=item.comment.id) }}" style="display: inline;">
+                                        <button class="btn btn-link p-0 small" type="submit" style="border: none; background: none; color: inherit; text-decoration: none; 
+                                        font-size: small;">
+                                            Remove
+                                        </button>
+                                    </form>
+                                    
+                                    <span class="dots"> • </span>
+                                    <small>{{ item.blog_title }}</small>
+                                    
+                                </div>
+
+                                <div class="icons align-items-center">
+                                    <i class="fa fa-check-circle-o check-icon text-primary"></i>
+                                </div>
+
+                            </div>
+                        </div>
+                        {% endfor %}
+                    
+                    <!--End of comment-->                   
+                </div>
+                
+            </div>
+            
+        </div>
+        <!--End of comments-->
+
+        
+        <!--Start of blogs by the user-->
+        <div class="container tohide hidden" id="allblogs">
+            <div class="top"></div>
+            <h2>All Blogs</h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Date Posted</th>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <!-- Add any other columns you want to display -->
+                </tr>
+                </thead>
+                <tbody>
+                {% for blog in all_blogs.items %}
+                <tr>
+                    <td>{{ blog.date_posted }}</td>
+                    <td><a href="{{ url_for('routes.blog', slug=blog.slug) }}">{{ blog.title }}</a></td>
+                    <td>{{ blog.user.name if blog.user else 'No author' }}</td>
+                    <!-- Add any other columns you want to display -->
+                    
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if all_blogs.has_prev or all_blogs.has_next %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if all_blogs.has_prev %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('views.dashboard', page=all_blogs.prev_num) }}">Previous</a></li>
+                    {% endif %}
+                    {% if all_blogs.has_next %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('views.dashboard', page=all_blogs.next_num) }}">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+        <!--End of blogs by the user-->
+
+    </div>
+</div>
+
+<script src="./../static/AdminJS/jquery.min.js"></script>
+<script src="./../static/AdminJS/popper.js"></script>
+<script src="./../static/AdminJS/bootstrap.min.js"></script>
+<script src="./../static/AdminJS/main.js"></script>
+<script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+<script>
+    // Initialize CKEditor
+    CKEDITOR.replace('editor', {
+        width: '100%', // Set desired width (e.g., 100%)
+        height: '300px' // Set desired height (e.g., 400 pixels)
+    });
+
+    function showSection(sectionId, element) {
+        // Hide all sections
+        var sections = document.querySelectorAll('.tohide');
+        sections.forEach(function(section) {
+            section.classList.add('hidden');
+            section.classList.remove('visible');
+        });
+
+        // Remove 'active' class from all sidebar items
+        var sidebarItems = document.querySelectorAll('#sidebar ul li');
+        sidebarItems.forEach(function(item) {
+            item.classList.remove('active');
+        });
+
+        // Show selected section
+        var selectedSection = document.getElementById(sectionId);
+        if (selectedSection) {
+            selectedSection.classList.remove('hidden');
+            selectedSection.classList.add('visible');
+        }
+
+        
+    }
+
+    // Initially show the 'Add New Blog' section
+    showSection('addblog', document.querySelector('#sidebar ul li.active'));
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
